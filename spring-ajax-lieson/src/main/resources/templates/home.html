@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{country.management}">Country Management</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div th:fragment="content" th:remove="tag">
+    <div class="container mt-4 centered">
+        <div sec:authorize="isAuthenticated()">
+            <p th:text="#{welcome.message}"></p> <b><span sec:authentication="name">Username</span></b>
+            &nbsp;
+            <span sec:authentication="principal.authorities">Roles</span> <!-- Hardcoded roles label -->
+            <form th:action="@{/logout}" method="post">
+                <input type="submit" th:value="#{logout.button}" />
+            </form>
+        </div>
+
+        <h2 th:text="#{country.management}"></h2>
+
+        <!-- Row containing both buttons -->
+        <div class="mb-3 row">
+            <!-- Load Country List Button -->
+            <div class="col-md-6">
+                <input type="button" th:value="#{load.country.list}" id="buttonLoadCountries" class="btn btn-primary"/>
+            </div>
+
+            <!-- Redirect to States Page Button -->
+            <input type="button" th:value="#{manage.states}" class="btn btn-primary ml-2" onclick="window.location.href='/stateshtml'"/>
+        </div>
+
+        <div class="mb-3">
+            <label for="dropDownCountries"></label>
+            <select id="dropDownCountries" class="form-control" style="height: 300px;" size="3">
+                <!-- Countries will be loaded here -->
+            </select>
+        </div>
+
+        <div class="form-group row centered">
+            <label for="countryName" class="col-form-label" th:text="#{country.name}"></label>
+            <div>
+                <input type="text" class="form-control" id="countryName" required/>
+            </div>
+        </div>
+
+        <div class="form-group centered">
+            <!-- Add button visible to ADMIN and EDITOR -->
+            <input type="button" th:value="#{add.button}" id="buttonAdd" class="btn btn-secondary mr-2"
+                   sec:authorize="hasAnyAuthority('ADMIN')"/>
+
+            <!-- Update button visible to ADMIN and EDITOR -->
+            <input type="button" th:value="#{update.button}" id="buttonUpdate" class="btn btn-secondary mr-2"
+                   disabled="disabled" sec:authorize="hasAnyAuthority('ADMIN', 'EDITOR')"/>
+
+            <!-- Delete button visible to ADMIN only -->
+            <input type="button" th:value="#{delete.button}" id="buttonDelete" class="btn btn-secondary"
+                   disabled="disabled" sec:authorize="hasAuthority('ADMIN')"/>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script th:src="@{/js/countries.js}"></script>
+</body>
+</html>
